@@ -43,6 +43,7 @@ for x in range(noOfClasses):
     count += 1
 print(" ")
 
+#converting images into numpy array
 images = np.array(images)
 classNo = np.array(classNo)
 
@@ -57,11 +58,13 @@ print(x_test.shape)
 print(X_validation.shape)
 
 numOfSamples = []
+#check number of images in each class
 for x in range(0, noOfClasses):
     # print(len(np.where(y_train==x)[0]))
     numOfSamples.append(len(np.where(y_train == x)[0]))
 print(numOfSamples)
 
+#disply number of images
 plt.figure(figsize=(10, 5))
 plt.bar(range(0, noOfClasses), numOfSamples)
 plt.title("NO of images for each class ")
@@ -86,10 +89,12 @@ X_train = np.array(list(map(preProcessing, X_train)))
 x_test = np.array(list(map(preProcessing, x_test)))
 X_validation = np.array(list(map(preProcessing, X_validation)))
 
+#Adding depth for CNN to run properly
 X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], X_train.shape[2], 1)
 x_test = x_test.reshape(x_test.shape[0], x_test.shape[1], x_test.shape[2], 1)
 X_validation = X_validation.reshape(X_validation.shape[0], X_validation.shape[1], X_validation.shape[2], 1)
 
+#Image Augmentation
 dataGen = ImageDataGenerator(width_shift_range=0.1,
                              height_shift_range=0.1,
                              zoom_range=0.2,
@@ -97,10 +102,12 @@ dataGen = ImageDataGenerator(width_shift_range=0.1,
                              rotation_range=10)
 
 dataGen.fit(X_train)
+#one-hot-encoding
 y_train = to_categorical(y_train, noOfClasses)
 y_test = to_categorical(y_test, noOfClasses)
 y_validation = to_categorical(y_validation, noOfClasses)
 
+#LeNet Model
 def myModel():
     noOfFilters= 60
     sizeOfFilter1=(5,5)
@@ -131,7 +138,7 @@ def myModel():
 model = myModel()
 print(model.summary())
 
-
+#train model
 history = model.fit_generator(dataGen.flow(X_train, y_train,
                                   batch_size=batchSizeVal),
                                   steps_per_epoch = stepsPerEpochVal,
@@ -157,7 +164,7 @@ score = model.evaluate(x_test,y_test,verbose=0)
 print('Test Score =' ,score[0])
 print('Test Accuracy=', score[1])
 
-
+#Saving model into a pickle file
 pickle_out= open("A/model_trained_10epoch.p", "wb")
 pickle.dump(model,pickle_out)
 pickle_out.close()

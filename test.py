@@ -26,7 +26,7 @@ cap = cv2.VideoCapture()
 cap.open(0, cv2.CAP_DSHOW)
 while(True):
     success, imgOriginal = cap.read()
-    img = np.asarray(imgOriginal)
+    img = np.asarray(imgOriginal) #convert images into array of similar dimensions
     img = cv2.resize(img, (32, 32))
     img = preProcessing(img)
     cv2.imshow('Processed image', img)
